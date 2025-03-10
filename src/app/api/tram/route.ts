@@ -88,14 +88,39 @@ class MetroAPI {
     const baseUrl = "https://giromilano.atm.it/proxy.tpportal/api/tpPortal";
     const url = `${baseUrl}/tpl/stops/${station.code}/linesummary`;
     try {
+      // Add a small random delay to mimic human behavior
+      await new Promise(resolve => setTimeout(resolve, Math.random() * 1000));
+      
       const res = await fetch(url, {
         headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-          "Accept": "application/json",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+          "Accept": "application/json, text/plain, */*",
+          "Accept-Language": "it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7",
+          "Accept-Encoding": "gzip, deflate, br",
           "Origin": "https://giromilano.atm.it",
           "Referer": "https://giromilano.atm.it/",
+          "sec-ch-ua": '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": '"macOS"',
+          "Sec-Fetch-Dest": "empty",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Site": "same-origin",
+          "Connection": "keep-alive",
+          "Cache-Control": "no-cache",
+          "Pragma": "no-cache",
+          "DNT": "1",
+          "Upgrade-Insecure-Requests": "1",
+          "X-Requested-With": "XMLHttpRequest",
+          "X-Forwarded-For": "127.0.0.1",
+          "X-Real-IP": "127.0.0.1",
+          "CF-Connecting-IP": "127.0.0.1",
+          "True-Client-IP": "127.0.0.1"
         },
+        cache: "no-store",
+        mode: "cors",
+        credentials: "omit",
+        redirect: "follow",
+        keepalive: true
       });
       if (!res.ok) {
         console.error(`HTTP error ${res.status} for station ${station.name}`);
