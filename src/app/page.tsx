@@ -347,21 +347,23 @@ export default function Home() {
         )}
 
         {result && (
-          <div className="mt-8 sm:mt-12 space-y-8 sm:space-y-12">
+          <div className="mt-8 sm:mt-12 space-y-8">
             {result.best_tram && (
-              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-gray-100/50">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
-                  <div className="flex items-center space-x-3">
-                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">
+              <div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-xl font-semibold text-gray-900">
                       Best Option
                     </h2>
-                    <div className="flex items-center space-x-1.5 text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                      <ArrowTrendingUpIcon className="w-4 h-4" />
-                      <span className="font-medium text-sm">Fastest Route</span>
+                    <div className="flex items-center space-x-1 bg-green-50 px-2 py-0.5 rounded-full">
+                      <ArrowTrendingUpIcon className="w-3.5 h-3.5 text-green-600" />
+                      <span className="text-xs font-medium text-green-600">
+                        Fastest
+                      </span>
                     </div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-blue-50/80 to-indigo-50/80 rounded-xl p-3 sm:p-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+                <div className="bg-gradient-to-br from-blue-50/90 via-white/50 to-indigo-50/90 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-blue-100/30 shadow-sm">
                   {(() => {
                     const { type, number, route, fullRoute } = formatTramTitle(
                       result.best_tram.station_line
@@ -369,17 +371,14 @@ export default function Home() {
                     return (
                       <div className="space-y-3 mb-6">
                         <div className="flex flex-wrap items-center gap-2 mb-3">
-                          <div className="flex items-center space-x-1.5 bg-blue-600 text-white px-2.5 py-1 rounded-full shadow-sm">
-                            <TruckIcon className="w-4 h-4" />
-                            <span className="font-medium text-sm">
-                              {type} {number}
-                            </span>
-                          </div>
+                          <span className="text-base sm:text-lg font-semibold text-blue-600">
+                            {type} {number}
+                          </span>
                           <span className="text-sm text-gray-500">
                             {fullRoute}
                           </span>
                         </div>
-                        <p className="text-lg font-medium text-gray-900">
+                        <p className="text-sm font-medium text-gray-900">
                           {route}
                         </p>
                       </div>
@@ -395,16 +394,18 @@ export default function Home() {
               </div>
             )}
 
-            <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-gray-100/50">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
-                <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">
-                  All Options
-                </h2>
-                <div className="text-sm text-gray-500">
-                  Execution time: {result.execution_time.toFixed(2)}s
+            <div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="bg-gray-900 rounded-full p-1.5">
+                    <MapPinIcon className="w-4 h-4 text-white" />
+                  </div>
+                  <h2 className="text-lg font-medium text-gray-900">
+                    All Options
+                  </h2>
                 </div>
               </div>
-              <div className="space-y-8">
+              <div className="space-y-6">
                 {Object.entries(result.trip_plan).map(([station, trams]) => {
                   const { type, number, route, fullRoute } =
                     formatTramTitle(station);
@@ -414,16 +415,13 @@ export default function Home() {
                   return (
                     <div
                       key={station}
-                      className="border-b border-gray-100 last:border-0 pb-8 last:pb-0"
+                      className="border-b border-gray-100/50 last:border-0 pb-6 last:pb-0"
                     >
                       <div className="space-y-3 mb-6">
                         <div className="flex flex-wrap items-center gap-2 mb-3">
-                          <div className="flex items-center space-x-1.5 bg-blue-600 text-white px-2.5 py-1 rounded-full shadow-sm">
-                            <TruckIcon className="w-4 h-4" />
-                            <span className="font-medium text-sm">
-                              {type} {number}
-                            </span>
-                          </div>
+                          <span className="text-base sm:text-lg font-semibold text-blue-600">
+                            {type} {number}
+                          </span>
                           <span className="text-sm text-gray-500">
                             {fullRoute}
                           </span>
@@ -434,7 +432,7 @@ export default function Home() {
                       </div>
 
                       {feasibleTrams.length > 0 && (
-                        <div className="space-y-3">
+                        <div className="space-y-2">
                           <h4 className="text-xs font-medium text-green-600 flex items-center space-x-1.5">
                             <div className="w-1 h-1 bg-green-600 rounded-full"></div>
                             <span>Available Options</span>
@@ -443,7 +441,7 @@ export default function Home() {
                             {feasibleTrams.map((tram, index) => (
                               <div
                                 key={index}
-                                className="bg-green-50/50 rounded-xl p-3 border border-green-100/50 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
+                                className="bg-gradient-to-br from-green-50/90 via-white/50 to-blue-50/90 backdrop-blur-sm rounded-xl p-3 border border-green-100/30 shadow-sm hover:shadow-md transition-all duration-200"
                               >
                                 <Timeline
                                   segments={getTimeSegments(tram)}
@@ -458,7 +456,7 @@ export default function Home() {
                       )}
 
                       {nonFeasibleTrams.length > 0 && (
-                        <div className="space-y-3 mt-3">
+                        <div className="space-y-2 mt-3">
                           <h4 className="text-xs font-medium text-gray-500 flex items-center space-x-1.5">
                             <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
                             <span>Missed Options</span>
@@ -467,7 +465,7 @@ export default function Home() {
                             {nonFeasibleTrams.map((tram, index) => (
                               <div
                                 key={index}
-                                className="bg-gray-50/50 rounded-xl p-3 border border-gray-100/50 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
+                                className="bg-gradient-to-br from-gray-50/90 via-white/50 to-gray-50/90 backdrop-blur-sm rounded-xl p-3 border border-gray-200/30 shadow-sm hover:shadow-md transition-all duration-200"
                               >
                                 <Timeline
                                   segments={getTimeSegments(tram)}
