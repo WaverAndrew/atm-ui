@@ -56,9 +56,8 @@ const getTimeSegments = (tram: TramInfo): TimeSegment[] => {
     {
       label: "Initial Walk",
       value: tram.walk_time,
-      color: "bg-emerald-500",
+      color: "bg-gray-600",
       icon: UserIcon,
-      description: `Time to walk from your location to the station (${tram.walk_time} min)`,
     },
   ];
 
@@ -68,26 +67,21 @@ const getTimeSegments = (tram: TramInfo): TimeSegment[] => {
       value: tram.wait_at_stop,
       color: "bg-amber-500",
       icon: ClockIcon,
-      description: `Waiting at the stop (${tram.wait_at_stop.toFixed(
-        1
-      )} min) - Tram arrives in ${tram.arrival} min`,
     });
   }
 
   segments.push({
     label: "Travel",
     value: tram.total_travel_time,
-    color: "bg-indigo-500",
+    color: "bg-violet-500",
     icon: TruckIcon,
-    description: `Riding the tram (${tram.total_travel_time.toFixed(1)} min)`,
   });
 
   segments.push({
     label: "Final Walk",
     value: tram.final_walking_time,
-    color: "bg-emerald-500",
+    color: "bg-gray-600",
     icon: UserIcon,
-    description: `Time to walk from the station to your destination (${tram.final_walking_time} min)`,
   });
 
   return segments;
@@ -97,144 +91,73 @@ const Timeline = ({
   segments,
   totalTime,
   arrival,
+  tram,
 }: {
   segments: TimeSegment[];
   totalTime: number;
   arrival: number;
+  tram: TramInfo;
 }) => {
-  const [hoveredSegment, setHoveredSegment] = useState<number | null>(null);
-
   return (
-    <div className="relative pt-4">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex flex-wrap gap-2">
-          {segments.map((segment, index) => (
-            <div
-              key={index}
-              className="flex items-center group cursor-pointer"
-              onMouseEnter={() => setHoveredSegment(index)}
-              onMouseLeave={() => setHoveredSegment(null)}
-            >
-              <div
-                className={`w-3 h-3 rounded-full ${segment.color} mr-1 transition-transform duration-200 group-hover:scale-125`}
-              />
-              <span className="text-xs text-gray-600 group-hover:text-gray-900 transition-colors duration-200">
-                {segment.label}
-              </span>
-            </div>
-          ))}
-        </div>
-        <div className="flex items-center space-x-2">
-          <div className="flex items-center space-x-1 bg-blue-50 px-2 py-1 rounded-full">
-            <ClockIcon className="w-4 h-4 text-blue-500" />
-            <span className="text-xs text-blue-600">
-              Arrives in {arrival} min
-            </span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <BoltIcon className="w-4 h-4 text-yellow-500 animate-pulse" />
-            <span className="text-sm font-medium text-gray-900">
-              {totalTime.toFixed(1)} min
-            </span>
-          </div>
-        </div>
-      </div>
-      <div className="h-8 bg-gray-100 rounded-full overflow-hidden relative">
+    <div className="space-y-6">
+      <div className="flex items-center space-x-3 py-4">
         {segments.map((segment, index) => (
-          <div
-            key={index}
-            className={`absolute h-full ${
-              segment.color
-            } transition-all duration-500 ease-out transform origin-left ${
-              hoveredSegment === index ? "brightness-110" : ""
-            }`}
-            style={{
-              width: `${(segment.value / totalTime) * 100}%`,
-              left: `${segments
-                .slice(0, index)
-                .reduce(
-                  (acc, seg) => acc + (seg.value / totalTime) * 100,
-                  0
-                )}%`,
-            }}
-          >
-            <div className="absolute inset-0 flex items-center justify-center space-x-1">
-              {segment.icon && (
-                <div className="w-4 h-4 text-white">
-                  {segment.icon === UserIcon && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                      />
-                    </svg>
-                  )}
-                  {segment.icon === ClockIcon && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  )}
-                  {segment.icon === TruckIcon && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"
-                      />
-                    </svg>
-                  )}
-                </div>
-              )}
-              <span className="text-xs font-medium text-white">
-                {segment.value.toFixed(1)}m
-              </span>
+          <>
+            <div key={`segment-${index}`} className="flex items-center">
+              <div className="flex items-center">
+                {segment.icon && (
+                  <segment.icon
+                    className={`w-6 h-6 ${segment.color.replace(
+                      "bg-",
+                      "text-"
+                    )} stroke-[1] opacity-90`}
+                  />
+                )}
+                <span
+                  className={`ml-2 text-lg font-medium ${segment.color.replace(
+                    "bg-",
+                    "text-"
+                  )} opacity-90`}
+                >
+                  {Math.round(segment.value)} min
+                </span>
+              </div>
             </div>
-          </div>
+            {index < segments.length - 1 && (
+              <div className="w-6 h-0.5 bg-gray-200" />
+            )}
+          </>
         ))}
       </div>
-      {hoveredSegment !== null && (
-        <div className="absolute z-10 bg-white shadow-lg rounded-lg p-3 mt-2 transform -translate-x-1/2 left-1/2">
+      <div className="flex items-center space-x-12">
+        <div className="flex flex-col items-center">
           <div className="flex items-center space-x-2">
-            <div
-              className={`w-4 h-4 rounded-full ${segments[hoveredSegment].color}`}
-            />
-            <div>
-              <p className="text-sm font-medium text-gray-900">
-                {segments[hoveredSegment].label}
-              </p>
-              <p className="text-xs text-gray-500">
-                {segments[hoveredSegment].description}
-              </p>
-              <p className="text-xs font-medium text-gray-700">
-                {segments[hoveredSegment].value.toFixed(1)} minutes
-              </p>
-            </div>
+            <BoltIcon className="w-6 h-6 text-violet-500 stroke-[1] opacity-90" />
+            <span className="text-2xl font-semibold text-gray-900">
+              {Math.round(totalTime)} min
+            </span>
           </div>
+          <span className="text-sm text-gray-500 mt-1">Total Journey</span>
         </div>
-      )}
+        <div className="flex flex-col items-center">
+          <div className="flex items-center space-x-2">
+            <ClockIcon className="w-6 h-6 text-blue-500 stroke-[1] opacity-90" />
+            <span className="text-2xl font-semibold text-blue-500">
+              Arrives in {Math.round(arrival)} min
+            </span>
+          </div>
+          <span className="text-sm text-gray-500 mt-1">Arrival Time</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="flex items-center space-x-2">
+            <StopIcon className="w-6 h-6 text-amber-500 stroke-[1] opacity-90" />
+            <span className="text-2xl font-semibold text-gray-900">
+              {Math.round(tram.wait_at_stop || 0)} min wait
+            </span>
+          </div>
+          <span className="text-sm text-gray-500 mt-1">Wait Time</span>
+        </div>
+      </div>
     </div>
   );
 };
@@ -246,6 +169,23 @@ const loadingMessages = [
   "Analyzing wait times...",
   "Finding the best option...",
 ];
+
+function formatTramTitle(title: string) {
+  // Extract route, tram number, and direction from the title
+  const match = title.match(
+    /(.*?) \((Tram|Bus) (\d+) (.*?), Direction (\d+)\)/
+  );
+  if (!match)
+    return { route: title, type: "", number: "", fullRoute: "", direction: "" };
+
+  return {
+    route: match[1],
+    type: match[2],
+    number: match[3],
+    fullRoute: match[4],
+    direction: match[5],
+  };
+}
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -401,84 +341,46 @@ export default function Home() {
             {result.best_tram && (
               <div className="bg-white shadow-lg rounded-2xl p-4 sm:p-8 border border-gray-100">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
-                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-                    Best Option
-                  </h2>
-                  <div className="flex items-center space-x-2 text-green-600 bg-green-50 px-3 py-1 rounded-full self-start sm:self-auto">
-                    <ArrowTrendingUpIcon className="w-5 h-5" />
-                    <span className="font-medium">Fastest Route</span>
+                  <div className="flex items-center space-x-3">
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+                      Best Option
+                    </h2>
+                    <div className="flex items-center space-x-2 text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                      <ArrowTrendingUpIcon className="w-5 h-5" />
+                      <span className="font-medium">Fastest Route</span>
+                    </div>
                   </div>
                 </div>
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 sm:p-6 shadow-sm">
-                  <p className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
-                    {result.best_tram.station_line}
-                  </p>
+                  {(() => {
+                    const { type, number, route, fullRoute } = formatTramTitle(
+                      result.best_tram.station_line
+                    );
+                    return (
+                      <div className="space-y-3 mb-6">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex items-center space-x-2 bg-blue-600 text-white px-3 py-1 rounded-full">
+                            <TruckIcon className="w-5 h-5" />
+                            <span className="font-medium">
+                              {type} {number}
+                            </span>
+                          </div>
+                          <span className="text-sm text-gray-500">
+                            {fullRoute}
+                          </span>
+                        </div>
+                        <p className="text-lg font-medium text-gray-900">
+                          {route}
+                        </p>
+                      </div>
+                    );
+                  })()}
                   <Timeline
                     segments={getTimeSegments(result.best_tram.tram)}
                     totalTime={result.best_tram.tram.total_time}
                     arrival={result.best_tram.tram.arrival}
+                    tram={result.best_tram.tram}
                   />
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
-                    <div className="flex items-start space-x-3">
-                      <ClockIcon className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">
-                          Total Time
-                        </p>
-                        <p className="text-base sm:text-lg font-semibold text-gray-900">
-                          {result.best_tram.tram.total_time.toFixed(1)} minutes
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <MapPinIcon className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">
-                          Walking Time
-                        </p>
-                        <div className="flex flex-col space-y-1">
-                          <p className="text-sm text-gray-600">
-                            To station: {result.best_tram.tram.walk_time} min
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            From station:{" "}
-                            {result.best_tram.tram.final_walking_time} min
-                          </p>
-                          <p className="text-base sm:text-lg font-semibold text-gray-900">
-                            Total:{" "}
-                            {result.best_tram.tram.walk_time +
-                              result.best_tram.tram.final_walking_time}{" "}
-                            min
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <TruckIcon className="w-5 h-5 text-purple-600 mt-1 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">
-                          Travel Time
-                        </p>
-                        <p className="text-base sm:text-lg font-semibold text-gray-900">
-                          {result.best_tram.tram.total_travel_time.toFixed(1)}{" "}
-                          minutes
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <ClockIcon className="w-5 h-5 text-orange-600 mt-1 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">
-                          Wait Time
-                        </p>
-                        <p className="text-base sm:text-lg font-semibold text-gray-900">
-                          {result.best_tram.tram.wait_at_stop?.toFixed(1) ||
-                            "N/A"}{" "}
-                          minutes
-                        </p>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             )}
@@ -492,119 +394,85 @@ export default function Home() {
                   Execution time: {result.execution_time.toFixed(2)}s
                 </div>
               </div>
-              <div className="space-y-6">
-                {Object.entries(result.trip_plan).map(([station, trams]) => (
-                  <div
-                    key={station}
-                    className="border-b border-gray-100 last:border-0 pb-6 last:pb-0"
-                  >
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
-                      {station}
-                    </h3>
-                    <div className="grid gap-4">
-                      {trams.map((tram, index) => (
-                        <div
-                          key={index}
-                          className={`p-3 sm:p-4 rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md ${
-                            tram.feasible
-                              ? "bg-green-50 border-green-100 hover:bg-green-100"
-                              : "bg-gray-50 border-gray-100 hover:bg-gray-100"
-                          }`}
-                        >
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 space-y-2 sm:space-y-0">
-                            <div className="flex items-center space-x-2">
+              <div className="space-y-8">
+                {Object.entries(result.trip_plan).map(([station, trams]) => {
+                  const { type, number, route, fullRoute } =
+                    formatTramTitle(station);
+                  const feasibleTrams = trams.filter((t) => t.feasible);
+                  const nonFeasibleTrams = trams.filter((t) => !t.feasible);
+
+                  return (
+                    <div
+                      key={station}
+                      className="border-b border-gray-100 last:border-0 pb-8 last:pb-0"
+                    >
+                      <div className="space-y-3 mb-6">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex items-center space-x-2 bg-gray-900 text-white px-3 py-1 rounded-full">
+                            <TruckIcon className="w-5 h-5" />
+                            <span className="font-medium">
+                              {type} {number}
+                            </span>
+                          </div>
+                          <span className="text-sm text-gray-500">
+                            {fullRoute}
+                          </span>
+                        </div>
+                        <p className="text-lg font-medium text-gray-900">
+                          {route}
+                        </p>
+                      </div>
+
+                      {feasibleTrams.length > 0 && (
+                        <div className="space-y-4">
+                          <h4 className="text-sm font-medium text-green-600 flex items-center space-x-2">
+                            <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                            <span>Available Options</span>
+                          </h4>
+                          <div className="grid gap-4">
+                            {feasibleTrams.map((tram, index) => (
                               <div
-                                className={`p-1 rounded-full ${
-                                  tram.feasible ? "bg-green-100" : "bg-gray-100"
-                                }`}
+                                key={index}
+                                className="bg-green-50 rounded-xl p-4 border border-green-100"
                               >
-                                <TruckIcon
-                                  className={`w-5 h-5 ${
-                                    tram.feasible
-                                      ? "text-green-600"
-                                      : "text-gray-600"
-                                  }`}
+                                <Timeline
+                                  segments={getTimeSegments(tram)}
+                                  totalTime={tram.total_time}
+                                  arrival={tram.arrival}
+                                  tram={tram}
                                 />
                               </div>
-                              <span className="font-medium text-gray-900">
-                                {tram.feasible
-                                  ? "Feasible Route"
-                                  : "Not Feasible"}
-                              </span>
-                            </div>
-                            <div className="flex items-center space-x-2 bg-white px-3 py-1 rounded-full shadow-sm self-start sm:self-auto">
-                              <ClockIcon className="w-5 h-5 text-blue-600" />
-                              <span className="font-medium text-gray-900">
-                                Total: {tram.total_time.toFixed(1)} min
-                              </span>
-                            </div>
-                          </div>
-                          <Timeline
-                            segments={getTimeSegments(tram)}
-                            totalTime={tram.total_time}
-                            arrival={tram.arrival}
-                          />
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                            <div className="flex items-start space-x-2">
-                              <MapPinIcon className="w-4 h-4 text-gray-600 mt-1 flex-shrink-0" />
-                              <div>
-                                <p className="text-xs font-medium text-gray-600">
-                                  Walking
-                                </p>
-                                <div className="flex flex-col space-y-1">
-                                  <p className="text-xs text-gray-600">
-                                    To: {tram.walk_time} min
-                                  </p>
-                                  <p className="text-xs text-gray-600">
-                                    From: {tram.final_walking_time} min
-                                  </p>
-                                  <p className="text-sm font-semibold text-gray-900">
-                                    Total:{" "}
-                                    {tram.walk_time + tram.final_walking_time}{" "}
-                                    min
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex items-start space-x-2">
-                              <TruckIcon className="w-4 h-4 text-gray-600 mt-1 flex-shrink-0" />
-                              <div>
-                                <p className="text-xs font-medium text-gray-600">
-                                  Travel
-                                </p>
-                                <p className="text-sm font-semibold text-gray-900">
-                                  {tram.total_travel_time.toFixed(1)} min
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex items-start space-x-2">
-                              <ClockIcon className="w-4 h-4 text-gray-600 mt-1 flex-shrink-0" />
-                              <div>
-                                <p className="text-xs font-medium text-gray-600">
-                                  Wait
-                                </p>
-                                <p className="text-sm font-semibold text-gray-900">
-                                  {tram.wait_at_stop?.toFixed(1) || "N/A"} min
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex items-start space-x-2">
-                              <ArrowTrendingUpIcon className="w-4 h-4 text-gray-600 mt-1 flex-shrink-0" />
-                              <div>
-                                <p className="text-xs font-medium text-gray-600">
-                                  Avg Speed
-                                </p>
-                                <p className="text-sm font-semibold text-gray-900">
-                                  {tram.avg_travel_time.toFixed(2)} min/stop
-                                </p>
-                              </div>
-                            </div>
+                            ))}
                           </div>
                         </div>
-                      ))}
+                      )}
+
+                      {nonFeasibleTrams.length > 0 && (
+                        <div className="space-y-4 mt-4">
+                          <h4 className="text-sm font-medium text-gray-500 flex items-center space-x-2">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                            <span>Missed Options</span>
+                          </h4>
+                          <div className="grid gap-4">
+                            {nonFeasibleTrams.map((tram, index) => (
+                              <div
+                                key={index}
+                                className="bg-gray-50 rounded-xl p-4 border border-gray-100"
+                              >
+                                <Timeline
+                                  segments={getTimeSegments(tram)}
+                                  totalTime={tram.total_time}
+                                  arrival={tram.arrival}
+                                  tram={tram}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
