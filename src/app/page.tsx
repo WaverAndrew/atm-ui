@@ -346,20 +346,22 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8">
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-4 sm:p-8">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Tram Finder</h1>
-          <p className="text-gray-700 text-lg">
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+            Tram Finder
+          </h1>
+          <p className="text-gray-700 text-base sm:text-lg">
             Find the fastest tram to your destination
           </p>
         </div>
 
-        <div className="flex justify-center mb-12">
+        <div className="flex justify-center mb-8 sm:mb-12">
           <button
             onClick={testApi}
             disabled={loading}
-            className="group relative inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
+            className="w-full sm:w-auto group relative inline-flex items-center justify-center px-6 sm:px-8 py-3 text-base sm:text-lg font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
           >
             {loading ? (
               <div className="flex items-center space-x-2">
@@ -376,9 +378,9 @@ export default function Home() {
         </div>
 
         {error && (
-          <div className="mt-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-center shadow-sm">
+          <div className="mt-4 p-3 sm:p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-center shadow-sm text-sm sm:text-base">
             <svg
-              className="w-5 h-5 mr-2"
+              className="w-5 h-5 mr-2 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -395,20 +397,20 @@ export default function Home() {
         )}
 
         {result && (
-          <div className="mt-8 space-y-8">
+          <div className="mt-6 sm:mt-8 space-y-6 sm:space-y-8">
             {result.best_tram && (
-              <div className="bg-white shadow-lg rounded-2xl p-8 border border-gray-100">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">
+              <div className="bg-white shadow-lg rounded-2xl p-4 sm:p-8 border border-gray-100">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
                     Best Option
                   </h2>
-                  <div className="flex items-center space-x-2 text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                  <div className="flex items-center space-x-2 text-green-600 bg-green-50 px-3 py-1 rounded-full self-start sm:self-auto">
                     <ArrowTrendingUpIcon className="w-5 h-5" />
                     <span className="font-medium">Fastest Route</span>
                   </div>
                 </div>
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 shadow-sm">
-                  <p className="text-lg font-semibold text-gray-900 mb-4">
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 sm:p-6 shadow-sm">
+                  <p className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
                     {result.best_tram.station_line}
                   </p>
                   <Timeline
@@ -416,25 +418,25 @@ export default function Home() {
                     totalTime={result.best_tram.tram.total_time}
                     arrival={result.best_tram.tram.arrival}
                   />
-                  <div className="grid grid-cols-2 gap-6 mt-6">
-                    <div className="flex items-center space-x-3">
-                      <ClockIcon className="w-5 h-5 text-blue-600" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
+                    <div className="flex items-start space-x-3">
+                      <ClockIcon className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
                       <div>
                         <p className="text-sm font-medium text-gray-700">
                           Total Time
                         </p>
-                        <p className="text-lg font-semibold text-gray-900">
+                        <p className="text-base sm:text-lg font-semibold text-gray-900">
                           {result.best_tram.tram.total_time.toFixed(1)} minutes
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <MapPinIcon className="w-5 h-5 text-green-600" />
+                    <div className="flex items-start space-x-3">
+                      <MapPinIcon className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
                       <div>
                         <p className="text-sm font-medium text-gray-700">
                           Walking Time
                         </p>
-                        <div className="flex flex-col">
+                        <div className="flex flex-col space-y-1">
                           <p className="text-sm text-gray-600">
                             To station: {result.best_tram.tram.walk_time} min
                           </p>
@@ -442,7 +444,7 @@ export default function Home() {
                             From station:{" "}
                             {result.best_tram.tram.final_walking_time} min
                           </p>
-                          <p className="text-lg font-semibold text-gray-900">
+                          <p className="text-base sm:text-lg font-semibold text-gray-900">
                             Total:{" "}
                             {result.best_tram.tram.walk_time +
                               result.best_tram.tram.final_walking_time}{" "}
@@ -451,25 +453,25 @@ export default function Home() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <TruckIcon className="w-5 h-5 text-purple-600" />
+                    <div className="flex items-start space-x-3">
+                      <TruckIcon className="w-5 h-5 text-purple-600 mt-1 flex-shrink-0" />
                       <div>
                         <p className="text-sm font-medium text-gray-700">
                           Travel Time
                         </p>
-                        <p className="text-lg font-semibold text-gray-900">
+                        <p className="text-base sm:text-lg font-semibold text-gray-900">
                           {result.best_tram.tram.total_travel_time.toFixed(1)}{" "}
                           minutes
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <ClockIcon className="w-5 h-5 text-orange-600" />
+                    <div className="flex items-start space-x-3">
+                      <ClockIcon className="w-5 h-5 text-orange-600 mt-1 flex-shrink-0" />
                       <div>
                         <p className="text-sm font-medium text-gray-700">
                           Wait Time
                         </p>
-                        <p className="text-lg font-semibold text-gray-900">
+                        <p className="text-base sm:text-lg font-semibold text-gray-900">
                           {result.best_tram.tram.wait_at_stop?.toFixed(1) ||
                             "N/A"}{" "}
                           minutes
@@ -481,9 +483,9 @@ export default function Home() {
               </div>
             )}
 
-            <div className="bg-white shadow-lg rounded-2xl p-8 border border-gray-100">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
+            <div className="bg-white shadow-lg rounded-2xl p-4 sm:p-8 border border-gray-100">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
                   All Options
                 </h2>
                 <div className="text-sm text-gray-500">
@@ -496,20 +498,20 @@ export default function Home() {
                     key={station}
                     className="border-b border-gray-100 last:border-0 pb-6 last:pb-0"
                   >
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
                       {station}
                     </h3>
                     <div className="grid gap-4">
                       {trams.map((tram, index) => (
                         <div
                           key={index}
-                          className={`p-4 rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md ${
+                          className={`p-3 sm:p-4 rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md ${
                             tram.feasible
                               ? "bg-green-50 border-green-100 hover:bg-green-100"
                               : "bg-gray-50 border-gray-100 hover:bg-gray-100"
                           }`}
                         >
-                          <div className="flex items-center justify-between mb-3">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 space-y-2 sm:space-y-0">
                             <div className="flex items-center space-x-2">
                               <div
                                 className={`p-1 rounded-full ${
@@ -530,7 +532,7 @@ export default function Home() {
                                   : "Not Feasible"}
                               </span>
                             </div>
-                            <div className="flex items-center space-x-2 bg-white px-3 py-1 rounded-full shadow-sm">
+                            <div className="flex items-center space-x-2 bg-white px-3 py-1 rounded-full shadow-sm self-start sm:self-auto">
                               <ClockIcon className="w-5 h-5 text-blue-600" />
                               <span className="font-medium text-gray-900">
                                 Total: {tram.total_time.toFixed(1)} min
@@ -542,14 +544,14 @@ export default function Home() {
                             totalTime={tram.total_time}
                             arrival={tram.arrival}
                           />
-                          <div className="grid grid-cols-2 gap-4 mt-4">
-                            <div className="flex items-center space-x-2">
-                              <MapPinIcon className="w-4 h-4 text-gray-600" />
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                            <div className="flex items-start space-x-2">
+                              <MapPinIcon className="w-4 h-4 text-gray-600 mt-1 flex-shrink-0" />
                               <div>
                                 <p className="text-xs font-medium text-gray-600">
                                   Walking
                                 </p>
-                                <div className="flex flex-col">
+                                <div className="flex flex-col space-y-1">
                                   <p className="text-xs text-gray-600">
                                     To: {tram.walk_time} min
                                   </p>
@@ -564,8 +566,8 @@ export default function Home() {
                                 </div>
                               </div>
                             </div>
-                            <div className="flex items-center space-x-2">
-                              <TruckIcon className="w-4 h-4 text-gray-600" />
+                            <div className="flex items-start space-x-2">
+                              <TruckIcon className="w-4 h-4 text-gray-600 mt-1 flex-shrink-0" />
                               <div>
                                 <p className="text-xs font-medium text-gray-600">
                                   Travel
@@ -575,8 +577,8 @@ export default function Home() {
                                 </p>
                               </div>
                             </div>
-                            <div className="flex items-center space-x-2">
-                              <ClockIcon className="w-4 h-4 text-gray-600" />
+                            <div className="flex items-start space-x-2">
+                              <ClockIcon className="w-4 h-4 text-gray-600 mt-1 flex-shrink-0" />
                               <div>
                                 <p className="text-xs font-medium text-gray-600">
                                   Wait
@@ -586,8 +588,8 @@ export default function Home() {
                                 </p>
                               </div>
                             </div>
-                            <div className="flex items-center space-x-2">
-                              <ArrowTrendingUpIcon className="w-4 h-4 text-gray-600" />
+                            <div className="flex items-start space-x-2">
+                              <ArrowTrendingUpIcon className="w-4 h-4 text-gray-600 mt-1 flex-shrink-0" />
                               <div>
                                 <p className="text-xs font-medium text-gray-600">
                                   Avg Speed
