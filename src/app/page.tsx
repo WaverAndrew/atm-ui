@@ -57,7 +57,7 @@ const getTimeSegments = (tram: TramInfo): TimeSegment[] => {
     {
       label: "Initial Walk",
       value: tram.walk_time,
-      color: "bg-gray-600",
+      color: "text-green-500",
       icon: UserIcon,
     },
   ];
@@ -66,7 +66,7 @@ const getTimeSegments = (tram: TramInfo): TimeSegment[] => {
     segments.push({
       label: "Wait",
       value: tram.wait_at_stop,
-      color: "bg-amber-500",
+      color: "text-amber-500",
       icon: ClockIcon,
     });
   }
@@ -74,14 +74,14 @@ const getTimeSegments = (tram: TramInfo): TimeSegment[] => {
   segments.push({
     label: "Travel",
     value: tram.total_travel_time,
-    color: "bg-violet-500",
+    color: "text-violet-500",
     icon: TruckIcon,
   });
 
   segments.push({
     label: "Final Walk",
     value: tram.final_walking_time,
-    color: "bg-gray-600",
+    color: "text-green-500",
     icon: UserIcon,
   });
 
@@ -109,19 +109,9 @@ const Timeline = ({
               <div className="flex items-center whitespace-nowrap">
                 <div className="flex items-center">
                   {segment.icon && (
-                    <segment.icon
-                      className={`w-3.5 h-3.5 ${segment.color.replace(
-                        "bg-",
-                        "text-"
-                      )} stroke-[1.5] opacity-90`}
-                    />
+                    <segment.icon className={`w-3.5 h-3.5 ${segment.color}`} />
                   )}
-                  <span
-                    className={`ml-1 text-xs font-medium ${segment.color.replace(
-                      "bg-",
-                      "text-"
-                    )} opacity-90`}
-                  >
+                  <span className={`ml-1 text-xs font-medium ${segment.color}`}>
                     {Math.round(segment.value)}m
                   </span>
                 </div>
@@ -136,34 +126,34 @@ const Timeline = ({
 
       {/* Stats */}
       <div className="flex flex-row gap-1.5 w-full">
-        <div className="flex-1 flex flex-col items-center justify-center bg-white/50 rounded-xl px-2 py-1.5">
+        <div className="flex-1 flex flex-col items-center justify-center rounded-xl px-2 py-1.5">
           <div className="flex items-center space-x-1 whitespace-nowrap">
-            <BoltIcon className="w-3.5 h-3.5 text-violet-500 stroke-[1.5] opacity-90" />
+            <BoltIcon className="w-3.5 h-3.5 text-violet-500" />
             <span className="text-sm font-semibold text-gray-900">
               {Math.round(totalTime)}m
             </span>
           </div>
-          <span className="text-[10px] text-gray-500 mt-0.5">Total</span>
+          <span className="text-[10px] text-gray-600 mt-0.5">Total</span>
         </div>
 
-        <div className="flex-1 flex flex-col items-center justify-center bg-white/50 rounded-xl px-2 py-1.5">
+        <div className="flex-1 flex flex-col items-center justify-center rounded-xl px-2 py-1.5">
           <div className="flex items-center space-x-1 whitespace-nowrap">
-            <ArrowRightCircleIcon className="w-3.5 h-3.5 text-blue-500 stroke-[1.5] opacity-90" />
+            <ArrowRightCircleIcon className="w-3.5 h-3.5 text-blue-500" />
             <span className="text-sm font-semibold text-blue-500">
               {Math.round(arrival)}m
             </span>
           </div>
-          <span className="text-[10px] text-gray-500 mt-0.5">Arrival</span>
+          <span className="text-[10px] text-gray-600 mt-0.5">Arrival</span>
         </div>
 
-        <div className="flex-1 flex flex-col items-center justify-center bg-white/50 rounded-xl px-2 py-1.5">
+        <div className="flex-1 flex flex-col items-center justify-center rounded-xl px-2 py-1.5">
           <div className="flex items-center space-x-1 whitespace-nowrap">
-            <ClockIcon className="w-3.5 h-3.5 text-amber-500 stroke-[1.5] opacity-90" />
+            <ClockIcon className="w-3.5 h-3.5 text-amber-500" />
             <span className="text-sm font-semibold text-gray-900">
               {Math.round(tram.wait_at_stop || 0)}m
             </span>
           </div>
-          <span className="text-[10px] text-gray-500 mt-0.5">Wait</span>
+          <span className="text-[10px] text-gray-600 mt-0.5">Wait</span>
         </div>
       </div>
     </div>
@@ -215,10 +205,6 @@ export default function Home() {
     setLoading(true);
     setError(null);
     try {
-      console.log(
-        "Making API request to:",
-        "https://dhlpmqvmd6lvc6m6tgij7jfgcq0fiypa.lambda-url.eu-west-3.on.aws/"
-      );
       const requestBody = {
         start_candidates: {
           "15": {
@@ -255,35 +241,23 @@ export default function Home() {
           },
         },
       };
-      console.log("Request body:", JSON.stringify(requestBody, null, 2));
 
-      const response = await fetch(
-        "https://dhlpmqvmd6lvc6m6tgij7jfgcq0fiypa.lambda-url.eu-west-3.on.aws/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
-
-      console.log("Response status:", response.status);
-      console.log(
-        "Response headers:",
-        Object.fromEntries(response.headers.entries())
-      );
+      const response = await fetch("/api/tram-finder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Error response:", errorText);
+        const errorData = await response.json();
         throw new Error(
-          `API request failed with status ${response.status}: ${errorText}`
+          errorData.error || `API request failed with status ${response.status}`
         );
       }
 
       const data: ApiResponse = await response.json();
-      console.log("API response:", data);
       setResult(data);
     } catch (err) {
       console.error("API call failed:", err);
@@ -457,7 +431,7 @@ export default function Home() {
                             {feasibleTrams.map((tram, index) => (
                               <div
                                 key={index}
-                                className="bg-gradient-to-br from-green-50/90 via-white/50 to-blue-50/90 backdrop-blur-sm rounded-xl p-3 border border-green-100/30 shadow-sm hover:shadow-md transition-all duration-200"
+                                className="bg-gradient-to-br from-green-50/80 to-blue-50/80 backdrop-blur-sm rounded-xl p-3 border border-green-100/30 shadow-sm hover:shadow-md transition-all duration-200"
                               >
                                 <Timeline
                                   segments={getTimeSegments(tram)}
@@ -481,7 +455,7 @@ export default function Home() {
                             {nonFeasibleTrams.map((tram, index) => (
                               <div
                                 key={index}
-                                className="bg-gradient-to-br from-gray-50/90 via-white/50 to-gray-50/90 backdrop-blur-sm rounded-xl p-3 border border-gray-200/30 shadow-sm hover:shadow-md transition-all duration-200"
+                                className="bg-gradient-to-br from-red-50/80 to-red-50/80 backdrop-blur-sm rounded-xl p-3 border border-gray-200/30 shadow-sm hover:shadow-md transition-all duration-200"
                               >
                                 <Timeline
                                   segments={getTimeSegments(tram)}
