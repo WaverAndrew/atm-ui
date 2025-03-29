@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import {
   ClockIcon,
   MapPinIcon,
@@ -13,6 +13,7 @@ import {
   StopIcon,
   UserIcon,
   BoltIcon,
+  ArrowRightCircleIcon,
 } from "@heroicons/react/24/outline";
 
 interface TramInfo {
@@ -104,11 +105,8 @@ const Timeline = ({
       <div className="flex justify-center items-center">
         <div className="flex items-center gap-1.5">
           {segments.map((segment, index) => (
-            <>
-              <div
-                key={`segment-${index}`}
-                className="flex items-center whitespace-nowrap"
-              >
+            <Fragment key={`segment-${index}`}>
+              <div className="flex items-center whitespace-nowrap">
                 <div className="flex items-center">
                   {segment.icon && (
                     <segment.icon
@@ -131,7 +129,7 @@ const Timeline = ({
               {index < segments.length - 1 && (
                 <div className="w-4 h-px border-t border-dashed border-gray-300" />
               )}
-            </>
+            </Fragment>
           ))}
         </div>
       </div>
@@ -150,7 +148,7 @@ const Timeline = ({
 
         <div className="flex-1 flex flex-col items-center justify-center bg-white/50 rounded-xl px-2 py-1.5">
           <div className="flex items-center space-x-1 whitespace-nowrap">
-            <ClockIcon className="w-3.5 h-3.5 text-blue-500 stroke-[1.5] opacity-90" />
+            <ArrowRightCircleIcon className="w-3.5 h-3.5 text-blue-500 stroke-[1.5] opacity-90" />
             <span className="text-sm font-semibold text-blue-500">
               {Math.round(arrival)}m
             </span>
@@ -160,7 +158,7 @@ const Timeline = ({
 
         <div className="flex-1 flex flex-col items-center justify-center bg-white/50 rounded-xl px-2 py-1.5">
           <div className="flex items-center space-x-1 whitespace-nowrap">
-            <StopIcon className="w-3.5 h-3.5 text-amber-500 stroke-[1.5] opacity-90" />
+            <ClockIcon className="w-3.5 h-3.5 text-amber-500 stroke-[1.5] opacity-90" />
             <span className="text-sm font-semibold text-gray-900">
               {Math.round(tram.wait_at_stop || 0)}m
             </span>
@@ -307,25 +305,31 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="flex justify-center mb-8 sm:mb-12">
-          <button
-            onClick={testApi}
-            disabled={loading}
-            className="w-full sm:w-auto relative inline-flex items-center justify-center px-6 sm:px-8 py-3 text-base font-medium text-white bg-blue-600 rounded-2xl hover:bg-blue-700 focus:outline-none focus:ring-0 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_16px_rgba(0,0,0,0.1)] hover:translate-y-[-1px]"
-          >
-            {loading ? (
-              <div className="flex items-center space-x-2">
-                <ArrowPathIcon className="w-5 h-5 animate-spin" />
-                <span>{loadingMessages[loadingMessage]}</span>
-              </div>
-            ) : (
-              <>
-                <TruckIcon className="w-5 h-5 mr-2" />
-                Find Best Tram
-              </>
-            )}
-          </button>
-        </div>
+        {!result && (
+          <div className="flex justify-center items-center min-h-[50vh]">
+            <button
+              onClick={testApi}
+              disabled={loading}
+              className="relative flex items-center justify-center w-32 h-32 sm:w-40 sm:h-40 text-white bg-gradient-to-br from-blue-500 to-blue-600 rounded-full hover:from-blue-600 hover:to-blue-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_12px_24px_rgba(37,99,235,0.2)] hover:shadow-[0_16px_32px_rgba(37,99,235,0.25)] hover:scale-105 active:scale-95 group"
+            >
+              {loading ? (
+                <div className="flex flex-col items-center space-y-3">
+                  <ArrowPathIcon className="w-8 h-8 sm:w-10 sm:h-10 animate-spin" />
+                  <span className="text-xs sm:text-sm text-center px-4">
+                    {loadingMessages[loadingMessage]}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center space-y-2">
+                  <TruckIcon className="w-10 h-10 sm:w-12 sm:h-12 group-hover:scale-110 transition-transform" />
+                  <span className="text-sm sm:text-base font-medium">
+                    Find Tram
+                  </span>
+                </div>
+              )}
+            </button>
+          </div>
+        )}
 
         {error && (
           <div className="mt-6 p-4 sm:p-5 bg-red-50 text-red-700 rounded-2xl flex items-center shadow-[0_2px_8px_rgba(0,0,0,0.05)] text-base">
@@ -348,6 +352,18 @@ export default function Home() {
 
         {result && (
           <div className="mt-8 sm:mt-12 space-y-8">
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={testApi}
+                disabled={loading}
+                className="inline-flex items-center justify-center p-3 text-blue-600 bg-blue-50 rounded-full hover:bg-blue-100 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow hover:scale-105 active:scale-95"
+                aria-label="Refresh tram times"
+              >
+                <ArrowPathIcon
+                  className={`w-6 h-6 ${loading ? "animate-spin" : ""}`}
+                />
+              </button>
+            </div>
             {result.best_tram && (
               <div>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
