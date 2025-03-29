@@ -99,63 +99,73 @@ const Timeline = ({
   tram: TramInfo;
 }) => {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center space-x-3 py-4">
-        {segments.map((segment, index) => (
-          <>
-            <div key={`segment-${index}`} className="flex items-center">
-              <div className="flex items-center">
-                {segment.icon && (
-                  <segment.icon
-                    className={`w-6 h-6 ${segment.color.replace(
+    <div className="space-y-3">
+      {/* Timeline segments */}
+      <div className="flex justify-center items-center">
+        <div className="flex items-center gap-1.5">
+          {segments.map((segment, index) => (
+            <>
+              <div
+                key={`segment-${index}`}
+                className="flex items-center whitespace-nowrap"
+              >
+                <div className="flex items-center">
+                  {segment.icon && (
+                    <segment.icon
+                      className={`w-3.5 h-3.5 ${segment.color.replace(
+                        "bg-",
+                        "text-"
+                      )} stroke-[1.5] opacity-90`}
+                    />
+                  )}
+                  <span
+                    className={`ml-1 text-xs font-medium ${segment.color.replace(
                       "bg-",
                       "text-"
-                    )} stroke-[1] opacity-90`}
-                  />
-                )}
-                <span
-                  className={`ml-2 text-lg font-medium ${segment.color.replace(
-                    "bg-",
-                    "text-"
-                  )} opacity-90`}
-                >
-                  {Math.round(segment.value)} min
-                </span>
+                    )} opacity-90`}
+                  >
+                    {Math.round(segment.value)}m
+                  </span>
+                </div>
               </div>
-            </div>
-            {index < segments.length - 1 && (
-              <div className="w-6 h-0.5 bg-gray-200" />
-            )}
-          </>
-        ))}
+              {index < segments.length - 1 && (
+                <div className="w-4 h-px border-t border-dashed border-gray-300" />
+              )}
+            </>
+          ))}
+        </div>
       </div>
-      <div className="flex items-center space-x-12">
-        <div className="flex flex-col items-center">
-          <div className="flex items-center space-x-2">
-            <BoltIcon className="w-6 h-6 text-violet-500 stroke-[1] opacity-90" />
-            <span className="text-2xl font-semibold text-gray-900">
-              {Math.round(totalTime)} min
+
+      {/* Stats */}
+      <div className="flex flex-row gap-1.5 w-full">
+        <div className="flex-1 flex flex-col items-center justify-center bg-white/50 rounded-xl px-2 py-1.5">
+          <div className="flex items-center space-x-1 whitespace-nowrap">
+            <BoltIcon className="w-3.5 h-3.5 text-violet-500 stroke-[1.5] opacity-90" />
+            <span className="text-sm font-semibold text-gray-900">
+              {Math.round(totalTime)}m
             </span>
           </div>
-          <span className="text-sm text-gray-500 mt-1">Total Journey</span>
+          <span className="text-[10px] text-gray-500 mt-0.5">Total</span>
         </div>
-        <div className="flex flex-col items-center">
-          <div className="flex items-center space-x-2">
-            <ClockIcon className="w-6 h-6 text-blue-500 stroke-[1] opacity-90" />
-            <span className="text-2xl font-semibold text-blue-500">
-              Arrives in {Math.round(arrival)} min
+
+        <div className="flex-1 flex flex-col items-center justify-center bg-white/50 rounded-xl px-2 py-1.5">
+          <div className="flex items-center space-x-1 whitespace-nowrap">
+            <ClockIcon className="w-3.5 h-3.5 text-blue-500 stroke-[1.5] opacity-90" />
+            <span className="text-sm font-semibold text-blue-500">
+              {Math.round(arrival)}m
             </span>
           </div>
-          <span className="text-sm text-gray-500 mt-1">Arrival Time</span>
+          <span className="text-[10px] text-gray-500 mt-0.5">Arrival</span>
         </div>
-        <div className="flex flex-col items-center">
-          <div className="flex items-center space-x-2">
-            <StopIcon className="w-6 h-6 text-amber-500 stroke-[1] opacity-90" />
-            <span className="text-2xl font-semibold text-gray-900">
-              {Math.round(tram.wait_at_stop || 0)} min wait
+
+        <div className="flex-1 flex flex-col items-center justify-center bg-white/50 rounded-xl px-2 py-1.5">
+          <div className="flex items-center space-x-1 whitespace-nowrap">
+            <StopIcon className="w-3.5 h-3.5 text-amber-500 stroke-[1.5] opacity-90" />
+            <span className="text-sm font-semibold text-gray-900">
+              {Math.round(tram.wait_at_stop || 0)}m
             </span>
           </div>
-          <span className="text-sm text-gray-500 mt-1">Wait Time</span>
+          <span className="text-[10px] text-gray-500 mt-0.5">Wait</span>
         </div>
       </div>
     </div>
@@ -286,13 +296,13 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-4 sm:p-8">
+    <main className="min-h-screen bg-[#f5f5f7] p-4 sm:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-gray-900 mb-2 tracking-tight">
             Tram Finder
           </h1>
-          <p className="text-gray-700 text-base sm:text-lg">
+          <p className="text-gray-500 text-base sm:text-lg">
             Find the fastest tram to your destination
           </p>
         </div>
@@ -301,7 +311,7 @@ export default function Home() {
           <button
             onClick={testApi}
             disabled={loading}
-            className="w-full sm:w-auto group relative inline-flex items-center justify-center px-6 sm:px-8 py-3 text-base sm:text-lg font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
+            className="w-full sm:w-auto relative inline-flex items-center justify-center px-6 sm:px-8 py-3 text-base font-medium text-white bg-blue-600 rounded-2xl hover:bg-blue-700 focus:outline-none focus:ring-0 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_16px_rgba(0,0,0,0.1)] hover:translate-y-[-1px]"
           >
             {loading ? (
               <div className="flex items-center space-x-2">
@@ -318,9 +328,9 @@ export default function Home() {
         </div>
 
         {error && (
-          <div className="mt-4 p-3 sm:p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-center shadow-sm text-sm sm:text-base">
+          <div className="mt-6 p-4 sm:p-5 bg-red-50 text-red-700 rounded-2xl flex items-center shadow-[0_2px_8px_rgba(0,0,0,0.05)] text-base">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="w-6 h-6 mr-3 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -328,7 +338,7 @@ export default function Home() {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
+                strokeWidth={1.5}
                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
@@ -337,31 +347,31 @@ export default function Home() {
         )}
 
         {result && (
-          <div className="mt-6 sm:mt-8 space-y-6 sm:space-y-8">
+          <div className="mt-8 sm:mt-12 space-y-8 sm:space-y-12">
             {result.best_tram && (
-              <div className="bg-white shadow-lg rounded-2xl p-4 sm:p-8 border border-gray-100">
+              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-gray-100/50">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
                   <div className="flex items-center space-x-3">
-                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">
                       Best Option
                     </h2>
-                    <div className="flex items-center space-x-2 text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                      <ArrowTrendingUpIcon className="w-5 h-5" />
-                      <span className="font-medium">Fastest Route</span>
+                    <div className="flex items-center space-x-1.5 text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                      <ArrowTrendingUpIcon className="w-4 h-4" />
+                      <span className="font-medium text-sm">Fastest Route</span>
                     </div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 sm:p-6 shadow-sm">
+                <div className="bg-gradient-to-br from-blue-50/80 to-indigo-50/80 rounded-xl p-3 sm:p-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
                   {(() => {
                     const { type, number, route, fullRoute } = formatTramTitle(
                       result.best_tram.station_line
                     );
                     return (
                       <div className="space-y-3 mb-6">
-                        <div className="flex items-center space-x-3">
-                          <div className="flex items-center space-x-2 bg-blue-600 text-white px-3 py-1 rounded-full">
-                            <TruckIcon className="w-5 h-5" />
-                            <span className="font-medium">
+                        <div className="flex flex-wrap items-center gap-2 mb-3">
+                          <div className="flex items-center space-x-1.5 bg-blue-600 text-white px-2.5 py-1 rounded-full shadow-sm">
+                            <TruckIcon className="w-4 h-4" />
+                            <span className="font-medium text-sm">
                               {type} {number}
                             </span>
                           </div>
@@ -385,9 +395,9 @@ export default function Home() {
               </div>
             )}
 
-            <div className="bg-white shadow-lg rounded-2xl p-4 sm:p-8 border border-gray-100">
+            <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-gray-100/50">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+                <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">
                   All Options
                 </h2>
                 <div className="text-sm text-gray-500">
@@ -407,10 +417,10 @@ export default function Home() {
                       className="border-b border-gray-100 last:border-0 pb-8 last:pb-0"
                     >
                       <div className="space-y-3 mb-6">
-                        <div className="flex items-center space-x-3">
-                          <div className="flex items-center space-x-2 bg-gray-900 text-white px-3 py-1 rounded-full">
-                            <TruckIcon className="w-5 h-5" />
-                            <span className="font-medium">
+                        <div className="flex flex-wrap items-center gap-2 mb-3">
+                          <div className="flex items-center space-x-1.5 bg-blue-600 text-white px-2.5 py-1 rounded-full shadow-sm">
+                            <TruckIcon className="w-4 h-4" />
+                            <span className="font-medium text-sm">
                               {type} {number}
                             </span>
                           </div>
@@ -418,22 +428,22 @@ export default function Home() {
                             {fullRoute}
                           </span>
                         </div>
-                        <p className="text-lg font-medium text-gray-900">
+                        <p className="text-sm font-medium text-gray-900">
                           {route}
                         </p>
                       </div>
 
                       {feasibleTrams.length > 0 && (
-                        <div className="space-y-4">
-                          <h4 className="text-sm font-medium text-green-600 flex items-center space-x-2">
-                            <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                        <div className="space-y-3">
+                          <h4 className="text-xs font-medium text-green-600 flex items-center space-x-1.5">
+                            <div className="w-1 h-1 bg-green-600 rounded-full"></div>
                             <span>Available Options</span>
                           </h4>
-                          <div className="grid gap-4">
+                          <div className="grid gap-2">
                             {feasibleTrams.map((tram, index) => (
                               <div
                                 key={index}
-                                className="bg-green-50 rounded-xl p-4 border border-green-100"
+                                className="bg-green-50/50 rounded-xl p-3 border border-green-100/50 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
                               >
                                 <Timeline
                                   segments={getTimeSegments(tram)}
@@ -448,16 +458,16 @@ export default function Home() {
                       )}
 
                       {nonFeasibleTrams.length > 0 && (
-                        <div className="space-y-4 mt-4">
-                          <h4 className="text-sm font-medium text-gray-500 flex items-center space-x-2">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                        <div className="space-y-3 mt-3">
+                          <h4 className="text-xs font-medium text-gray-500 flex items-center space-x-1.5">
+                            <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
                             <span>Missed Options</span>
                           </h4>
-                          <div className="grid gap-4">
+                          <div className="grid gap-2">
                             {nonFeasibleTrams.map((tram, index) => (
                               <div
                                 key={index}
-                                className="bg-gray-50 rounded-xl p-4 border border-gray-100"
+                                className="bg-gray-50/50 rounded-xl p-3 border border-gray-100/50 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
                               >
                                 <Timeline
                                   segments={getTimeSegments(tram)}
