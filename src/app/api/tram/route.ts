@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import https from 'https';
+import { Agent } from 'https';
+import fetch from 'node-fetch';
 
 // --- Type Definitions ---
 interface Station {
@@ -16,13 +19,22 @@ interface Line {
   line_code: string;
   direction: string;
   stations: Station[];
-  travel_time_between_stations: number; // default but we recalc average per line
+  travel_time_between_stations: number;
 }
 
 interface CandidateConfig {
   direction: string;
   target_station_code: string;
   walking_time: number;
+}
+
+interface MetroResponse {
+  Lines?: Array<{
+    Line?: {
+      LineCode: string;
+    };
+    WaitMessage: string;
+  }>;
 }
 
 // --- Utility: Parse Wait Message ---
@@ -84,6 +96,38 @@ function updateLinesWithCandidates(lines: Line[], candidates: { [key: string]: C
 
 // --- Metro API Client ---
 class MetroAPI {
+  private agent: Agent;
+
+  constructor() {
+    // Create a custom HTTPS agent with browser-like TLS parameters
+    this.agent = new Agent({
+      // Chrome-like cipher suites
+      ciphers: [
+        'TLS_AES_128_GCM_SHA256',
+        'TLS_AES_256_GCM_SHA384',
+        'TLS_CHACHA20_POLY1305_SHA256',
+        'ECDHE-ECDSA-AES128-GCM-SHA256',
+        'ECDHE-RSA-AES128-GCM-SHA256',
+        'ECDHE-ECDSA-AES256-GCM-SHA384',
+        'ECDHE-RSA-AES256-GCM-SHA384',
+        'ECDHE-ECDSA-CHACHA20-POLY1305',
+        'ECDHE-RSA-CHACHA20-POLY1305'
+      ].join(':'),
+      // Modern TLS version
+      minVersion: 'TLSv1.2',
+      maxVersion: 'TLSv1.2',
+      // Browser-like ALPN protocols
+      ALPNProtocols: ['h2', 'http/1.1'],
+      // Disable certificate verification (use with caution)
+      rejectUnauthorized: false,
+      // Browser-like keep-alive settings
+      keepAlive: true,
+      keepAliveMsecs: 1000,
+      // Browser-like timeout settings
+      timeout: 10000
+    });
+  }
+
   async getWaitingTime(station: Station, lineCode: string): Promise<number | null> {
     const baseUrl = "https://giromilano.atm.it/proxy.tpportal/api/tpPortal";
     const url = `${baseUrl}/tpl/stops/${station.code}/linesummary`;
@@ -92,6 +136,7 @@ class MetroAPI {
       await new Promise(resolve => setTimeout(resolve, Math.random() * 1000));
       
       const res = await fetch(url, {
+        agent: this.agent,
         headers: {
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
           "Accept": "application/json, text/plain, */*",
@@ -110,23 +155,15 @@ class MetroAPI {
           "Pragma": "no-cache",
           "DNT": "1",
           "Upgrade-Insecure-Requests": "1",
-          "X-Requested-With": "XMLHttpRequest",
-          "X-Forwarded-For": "127.0.0.1",
-          "X-Real-IP": "127.0.0.1",
-          "CF-Connecting-IP": "127.0.0.1",
-          "True-Client-IP": "127.0.0.1"
+          "X-Requested-With": "XMLHttpRequest"
         },
-        cache: "no-store",
-        mode: "cors",
-        credentials: "omit",
-        redirect: "follow",
-        keepalive: true
+        redirect: "follow"
       });
       if (!res.ok) {
         console.error(`HTTP error ${res.status} for station ${station.name}`);
         return null;
       }
-      const data = await res.json();
+      const data = await res.json() as MetroResponse;
       if (data && data.Lines) {
         for (const lineObj of data.Lines) {
           if (lineObj.Line && lineObj.Line.LineCode === lineCode) {
